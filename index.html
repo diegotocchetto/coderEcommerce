@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrarse</title>
+  <!-- CSS only -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+</head>
+
+
+
+
+<body>
+  <header>
+    <nav id="menu" class="navbar navbar-expand-lg bg-light">
+      <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a id="LinkRegistro"  data-bs-toggle="modal" class="nav-link active" data-bs-target="#registro" aria-current="page" href="">Registrarse</a>
+            </li>
+            <li class="nav-item">
+             <a id="Linkingresar"  data-bs-toggle="modal" class="nav-link active" data-bs-target="#logueo" aria-current="page" href="">Ingresar</a>
+            </li>
+            <li class="nav-item">
+              <a id="LinkMiCuenta"  class="nav-link disabled" data-bs-toggle="modal" class="nav-link active" data-bs-target="#miCuenta" aria-current="page" href=""></a>
+             </li>
+             <li class="nav-item">
+              <a id="LinkMiSaldo"  class="nav-link disabled" data-bs-toggle="modal" class="nav-link active" data-bs-target="#miCuent" aria-current="page" href=""></a>
+             </li>
+            <li class="nav-item">
+            <p id="LinkCerar2"  class="text-center mb-0"><a href="#"></a></p>
+            </li>
+          </ul>
+          </form>
+        </div>
+      </div>
+      <div>
+
+   <button type="button" id="btnVerCarrito" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#exampleModal">
+   <div class="d-flex">
+    <i class="bi bi-cart-fill" ></i>
+    <p id="contador">
+   </div>
+  </button>
+      </div>
+      <div id ="divCerrarSesion">
+      </div>
+    </nav>
+  </header>
+
+
+  <div class="container">
+    <h1 class="text-center">TIENDA ONLINE </h1>
+    <div class="row" id="Productos"></div>
+  </div>
+  
+ <!-- onsubmit="event.preventDefault();" VERIFICAR POR QUE NO REFRESCA 27/09 / SE CAMBIA A OFFCANVAS PORQUE EL MODAL SE CIERRA ANTE UN EVENTO-->
+
+ <div class="offcanvas offcanvas" tabindex="-1" id="exampleModal" aria-labelledby="offcanvasRightLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasRightLabel">CARRITO</h5>
+    <button type="button" id="btnCerrar"class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+ 
+    <table class="table">
+      <thead>
+        <tr>
+          <th scope="col">Producto</th>
+          <th scope="col">Cantidad</th>
+          <th scope="col"></th></th>
+          <th scope="col">Total $</th>
+        </tr>
+      </thead>
+      <tbody id="carritoConProducto"></tbody> 
+      <th id="totCompra"  scope="col">Monto</th>
+      <tfoot>
+        <tr div class="modal-footer">
+          <td>
+
+            <button type="button" id="btnBorrar"class="btn btn-primary">Vaciar Carrito</button>
+            <button type="button" data-bs-dismiss="offcanvas" id="btnComprar"class="btn btn-primary">Pagar</button>
+          </td>
+         
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+</div>
+
+
+
+      <!-- TEMPLATE DEL CARRITO/th> -->
+    <template id="templatelistaCarrito"> 
+      <tr>
+      <td></td>
+      <td></td>
+      <td>
+      <button class="btn btn-info btn-sm">+</button>
+      <button class="btn btn-danger btn-sm">-</button>
+      </td>
+      <td> <span></span></td>
+      </tr>
+       </template>
+      
+      
+
+    
+  
+
+      <!-- TEMPLATE DE LAS CARDS DE MOSTRAR PRODUCTOS/th> -->
+<template id="templateCard"> 
+  <div class="card col-12 col-md-4 mb-3" id="flex"> 
+     <img src="" class="card-img-top" alt="...">
+      <div class="card-body">
+      <h5></h5>
+      <p></p>
+      <button class="btn btn-dark">Agregar</button>
+    </div>
+  </div>
+</template>
+
+
+
+
+
+
+
+
+
+<!-- Modal  TRAIDO DE BOOSTRAP PARA EL LOGIN-->
+<div class="modal fade" id="logueo" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="logueoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logueoLabel">Ingresar a la plataforma</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       
+        <div class="container">
+          <div class="row">
+              <div class="col-md-4 offset-md-4">
+                  <div class="login-form bg-light mt-4 p-4">
+                      <form onsubmit="event.preventDefault();" action="" method="" class="row g-3">
+                          <div class="col-12">
+                              <label>Ingrese su Usuario</label>
+                              <input type="text" data-bs-whatever="@fat" name="username" id="txtUser" class="form-control" placeholder="Usuario">
+                          </div>
+                          <div class="col-12 mb-0 mb-5">
+                              <label>Ingrese su contraseña</label>
+                              <input type="password" name="password" id="txtPass" class="form-control" placeholder="Password">
+                          </div>
+                      
+                          <div class="col-12">
+                              <button type="button" id="btnLogin"  data-bs-dismiss="modal">Ingresar</button>
+                          </div>
+                      </form>
+                      <hr class="mt-4">
+                      <div class="col-12">
+                          <p class="text-center mb-0"><a href="#LinkRegistro" data-bs-target="#LinkRegistro">Registrese</a></p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- Modal  TRAIDO DE BOOSTRAP PARA EL LOGIN-->
+<div class="modal fade" id="registro" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="logueoLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="logueoLabel">Registrarse en la Plataforma</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+       
+        <div class="container">
+          <div class="row">
+              <div class="col-md-4 offset-md-4">
+                  <div class="login-form bg-light mt-4 p-4">
+                      <form onsubmit="event.preventDefault();" action="" method="" class="row g-3">
+                          <div class="col-12">
+                              <label>Nombre de Usuario</label>
+                              <input type="text" data-bs-whatever="@fat" name="username1" id="txtUser1" class="form-control" placeholder="Usuario">
+                          </div>
+                          <div class="col-12">
+                            <label>Nombre</label>
+                            <input type="text" data-bs-whatever="@fat" name="name" id="txtNombre" class="form-control" placeholder="Nombre">
+                        </div>
+                        <div class="col-12">
+                          <label>Apellido</label>
+                          <input type="text" data-bs-whatever="@fat" name="surname" id="txtApellido" class="form-control" placeholder="Apellido">
+                      </div>
+                      <div class="col-12">
+                        <label>Correo Electronico</label>
+                        <input type="text" data-bs-whatever="@fat" name="mail" id="txtmail" class="form-control" placeholder="Correo Electrónico">
+                    </div>
+                          <div class="col-12 mb-0 mb-5">
+                              <label>Ingrese una contraseña</label>
+                              <input type="password" name="password" id="txtPass1" class="form-control" placeholder="Password">
+                          </div>
+                          <div class="col-12">
+                              <button type="button" id="btnRegistro"  data-bs-dismiss="modal">Registrarse</button>
+                          </div>
+                      </form>
+                      <hr class="mt-4">
+                     
+                  </div>
+              </div>
+          </div>
+      </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-u1OknCvxWvY5kfmNBILK2hRnQC3Pr17a+RTT6rIHI7NnikvbZlHgTPOOmMi466C8" crossorigin="anonymous"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="app.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+</body>
+</html>
