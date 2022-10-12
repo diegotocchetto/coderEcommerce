@@ -1,0 +1,11 @@
+[
+{"id":1,"descripcion":"TV SMART 50 ANDROID","valor":19999,"cantidad":5,"imagen":"tv50.jpg"},
+{"id":2,"descripcion":"TV SMART 65 ANDROID","valor":25025,"cantidad":0,"imagen":"tv65.jpg"},
+{"id":3,"descripcion":"LAVARROPA CYAN C","valor":11690,"cantidad":1,"imagen":"lavarropa.jpg"},
+{"id":4,"descripcion":"AIRE ACONDICIONADO 12KBTU","valor":22000,"cantidad":5,"imagen":"Aire.jpg"},
+{"id":5,"descripcion":"HELADERA FRENCH DOOR INV","valor":52000,"cantidad":5,"imagen":"Heladera.jpg"},
+{"id":6,"descripcion":"MINICOMPONENTE 5000W","valor":15000,"cantidad":5,"imagen":"miniComponente.jpg"},
+{"id":7,"descripcion":"MINICOMPONENTE 10000W","valor":25000,"cantidad":5,"imagen":"miniComponente.jpg"},
+{"id":8,"descripcion":"CAMARA NIKON B500","valor":16799,"cantidad":1,"imagen":"Nikon B500.jpg"},
+{"id":9,"descripcion":"CAMARA NIKON D3500","valor":39000,"cantidad":1,"imagen":"nikon3500.jpg"}
+]
