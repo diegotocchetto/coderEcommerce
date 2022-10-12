@@ -1,0 +1,39 @@
+body {
+    background-color: #472a2a;  
+}
+
+h1 {
+    width: 100%;
+    text-align: center;
+    color:rgb(255, 255, 255);
+    font-size: 4vw;
+    margin: 15px
+}
+
+
+section {
+    width: 90%;
+
+}
+
+.card{
+    width: 350px;
+    margin: 5px;
+}
+
+.menuItem{
+    color: rgb(185, 10, 118) !important;
+    padding: 20px !important;
+    font-size: 25px;
+    font-style: oblique;
+}
+
+div.product-card {
+    width: 30%;
+    height: 20vh;
+    margin: 2%;
+
+    text-align: center;
+
+    background-color: rgb(193, 101, 14);
+}
