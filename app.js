@@ -1,29 +1,33 @@
+//CONSTANTES Y VARIABLES
 const usuarios = [];
 const facturas = [];
 const productos = [];
-//const productosAux = [];
-//const productosDisponibles = [];
 let carrito = [];
 let producto;
 let pass;
-//let moneda = "$";
 let contador=0;
 let usuarioLogueado;
-const linKMiSaldo = document.getElementById("LinkMiSaldo");
-const eventoBotonRegistro = document.getElementById("btnRegistro");
-const html = document.getElementById("Productos")
-const templateCard = document.getElementById("templateCard").content;
+
+///ELEMENTOS EN HTML////////
+const linKMiSaldo = document.querySelector("#LinkMiSaldo");
+const eventoBotonRegistro = document.querySelector("#btnRegistro");
+const html = document.querySelector("#Productos")
+const templateCard = document.querySelector("#templateCard").content;
 const fragment = document.createDocumentFragment();
-const templateCARRITO = document.getElementById("templatelistaCarrito").content; //aca es donde va la data
-const eventoBotonComprar = document.getElementById("btnComprar");
+const templateCARRITO = document.querySelector("#templatelistaCarrito").content; //aca es donde va la data
+const eventoBotonComprar = document.querySelector("#btnComprar");
 const cerrarSesion = document.querySelector("#divCerrarSesion");
 const botonCerrarSesion = document.createElement("a");
-const linkRegistrarse = document.getElementById("LinkRegistro");
-const linkIngresar = document.getElementById("Linkingresar");
-const linKMiCuenta = document.getElementById("LinkMiCuenta");
-const eventoBotonCerrarSesion = document.getElementById("LinkCerrar");
-const eventoBotonVaciar = document.getElementById("btnBorrar");
-const lineaMontoTotal=document.getElementById("totCompra");
+const linkRegistrarse = document.querySelector("#LinkRegistro");
+const linkIngresar = document.querySelector("#Linkingresar");
+const linKMiCuenta = document.querySelector("#LinkMiCuenta");
+const linKRecargar = document.querySelector("#LinkRecargar");
+const eventoBotonCerrarSesion = document.querySelector("#LinkCerrar");
+const eventoBotonVaciar = document.querySelector("#btnBorrar");
+const lineaMontoTotal=document.querySelector("#totCompra");
+const totSaldoCarrtio=document.querySelector("#totSaldo");
+const urlJsonProductos="./productos.json";
+
 
 
 // CONSTRUCTOR FACTURA
@@ -72,21 +76,17 @@ class Producto {
 }
 
 
-//sE HARCODEA PARA TRABAJAR MAS RAPIDO //NO ESTA IMPLEMENTADOP AGREGAR PRODUCTOS
-const producto1 = new Producto(1, "TV SMART 50 ANDROID", 19336, 5, "tv50.jpg");
-const producto2 = new Producto(2, "TV SMART 65 ANDROID", 25025, 0, "tv65.jpg");
-const producto3 = new Producto(3, "LAVARROPA CYAN C", 11690, 1, "lavarropa.jpg");
-const producto4 = new Producto(4, "AIRE ACONDICIONADO 12KBTU", 22000, 5, "Aire.jpg");
-const producto5 = new Producto(5, "HELADERA FRENCH DOOR INV", 52000, 5, "Heladera.jpg");
-const producto6 = new Producto(6, "MINICOMPONENTE 5000W", 15000, 5, "miniComponente.jpg");
 
-productos.push(producto1);
-productos.push(producto2);
-productos.push(producto3);
-productos.push(producto4);
-productos.push(producto5);
-productos.push(producto6);
-
+async function cargarProductos() { //CARGO LOS PRODUCTOS DESDE EL JSON Y LOS METO EN EL ARRAY
+ await fetch(urlJsonProductos)
+.then((resp)=>resp.json())
+.then((data)=>{
+    data.forEach((producto)=>{
+    producto = new Producto(producto.id,producto.descripcion,producto.valor,producto.cantidad,producto.imagen);
+    productos.push(producto); 
+    })
+})
+}
 
 
 class Carrito {
@@ -119,7 +119,6 @@ function validarUsuario(nombreUsuario, password) {
 
     let valido = false;
     usuarioLogueado = usuarios.find(usuario => usuario.nombreUsuario.toLowerCase() === nombreUsuario.toLowerCase());
-
     if (usuarioLogueado != undefined) {
         if (usuarioLogueado.pass === password) {
             valido = true;
@@ -131,27 +130,26 @@ function validarUsuario(nombreUsuario, password) {
 }
 
 
-//AGREGA AL USUARIO NO FUNCIONAL
+//AGREGA AL USUARIO 
 function agregarUsuario(usuarioNuevo) {
-
+    console.log("LLEGA");
+    console.log(usuarioNuevo.email);
     const existeUsuarioMail = usuarios.find(usuario => usuario.email === usuarioNuevo.email);
     const existeUsuarioNombreUsuario = usuarios.find(usuario => usuario.nombreUsuario === usuarioNuevo.nombreUsuario);
-    
 
     if (!existeUsuarioMail && !existeUsuarioNombreUsuario) {
         usuarios.push(usuarioNuevo);
-        
      // ALERT
         Swal.fire(
-            (`Hola ${usuarioNuevo.nombre} ${usuarioNuevo.apellido} , te has registrado correctamente`),
+            (`Hola ${usuarioNuevo.nombre} ${usuarioNuevo.apellido}, te has registrado correctamente`),
             '',
-            'vamos...segui comprando'
+            'Vamos...seguí comprando'
           )
     }
 
 
-    //SI EXISTE EL USUARIO VERIFICO QUE ESTA DUPLICADO, SI EL NOMBREUSUARIO O EL CORREO
-    existeUsuarioMail &&     Swal.fire({icon: 'error',title: "YA EXISTE UN USUARIO CON ESE CORREO ELECTRÓNICO",})
+    
+    //SI EXISTE EL USUARIO VERIFICO QUE NO TENGAN  LL NOMBREUSUARIO O EL CORREO
     if (existeUsuarioMail) {
         Swal.fire({
             icon: 'error',
@@ -170,9 +168,6 @@ function agregarUsuario(usuarioNuevo) {
 }
 
 
-
-
-
 //VACIAR CARRRITO
 function vaciarCarrito(accion) {
     const tamanioCarrtitoOriginal = carrito.length;
@@ -180,10 +175,10 @@ function vaciarCarrito(accion) {
 
         const lineacarrito = new Carrito(carrito[i - 1].idProducto, carrito[i - 1].descripcion, carrito[i - 1].cantidad, carrito[i - 1].precioLineaCarrito);
         carrito.pop(); //  //borro de abajo para arriba
-        let contadorCarrito=document.getElementById("contador");
+        let contadorCarrito=document.querySelector("#contador");
         contador=0;
         contadorCarrito.innerHTML=contador;
-        document.getElementById("btnCerrar").click();
+        document.querySelector("#btnCerrar").click();
     }
 
     
@@ -203,19 +198,19 @@ function vaciarCarrito(accion) {
     }
 }
 
-//AGREGAR DINERO A LA CUENTA DEL USUARIO // NO FUNCIONAL AUN CON DOM
 
+//AGREGAR DINERO A LA CUENTA DEL USUARIO // NO FUNCIONAL AUN CON DOM
 function agregarDineroACuentaUsuario(usuarioLogueado) {
 
     for(ElementoUsuario of usuarios)
     {
-        if (usuarios[i].nombreUsuario === usuarioLogueado.nombreUsuario)
+        if (ElementoUsuario.nombreUsuario === usuarioLogueado.nombreUsuario)
          {
-            let deposito = parseFloat(prompt("Ingrese el dinero a depositar"));
-            let saldo = usuarios[i].cuenta;
-            usuarios[i].cuenta = saldo + deposito;
-            usuarioLogueado = usuarios[i];
-            Swal.fire('Se ha acreditado correctamente el dinero a tu cuenta','vamos , busca el producto que te gusta y comprálo')
+            let deposito = parseFloat(document.querySelector("#xtSaldo").value);
+            let saldo = ElementoUsuario.cuenta;
+            ElementoUsuario.cuenta = saldo + deposito;
+            usuarioLogueado = ElementoUsuario;
+            Swal.fire('Se ha acreditado correctamente','vamos , busca el producto que te gusta y comprálo')
             break;
           }
     }
@@ -243,11 +238,9 @@ function verFactura(idusuario) {
     {
         for(elementoFactura of facturas)
         {
-            if (elementoFactura.idUsuario === usuarioLogueado.id) 
-                    {
+            if (elementoFactura.idUsuario === usuarioLogueado.id) {
                         misfacturas += "Nro. Factura: " + facturas[i].nroFactura + " - " + "Fecha: " + facturas[i].fecha + " - " + "Total $: " + facturas[i].total + "\n";
-                    }
-        }
+                    } }
     }
     else 
     {
@@ -262,8 +255,7 @@ function verFactura(idusuario) {
 //SUMA TODOS LOS TOTALES DE CADA LINEA DEL CARRITO Y DEVUELVE EL TOTAL A PAGAR
 function montoCompra() {
     let montoTotal = 0;
-    for(elementoCarrito of carrito)
-    {
+    for(elementoCarrito of carrito){
         montoTotal = parseFloat(montoTotal) + parseFloat(elementoCarrito.total);
     }
     return montoTotal;
@@ -272,12 +264,9 @@ function montoCompra() {
 
 
 
-function comprar() 
-{
-
-    let total = parseFloat(montoCompra());
-    if (carrito.length > 0) 
-    {
+function comprar() {
+ let total = parseFloat(montoCompra());
+    if (carrito.length > 0) {
 
         let i = usuarios.findIndex(usuario => usuario.nombreUsuario === JSON.parse(sessionStorage.getItem("usuario")).nombreUsuario);
         if (parseFloat(usuarios[i].cuenta) >= parseFloat(total)) {
@@ -287,8 +276,7 @@ function comprar()
             const compraOk=`Gracias ${usuarios[i].nombre} ${usuarios[i].apellido}, tu Compra se ha realizado con éxito, recibirás un correo a ${usuarios[i].email} con los detalles`
             Swal.fire(compraOk,'Tus pedidos ya se están preparando',)
         }
-        else 
-        {
+        else {
             const compraError  =`Saldo Insuficiente, su saldo es de $ ${parseFloat(usuarios[i].cuenta)} , recargue dinero para continuar con la compra`;
             Swal.fire({icon: 'error', title: compraError,})
         }
@@ -311,8 +299,7 @@ function moverStock(modo, lineacarrito) //    //MODO 0 ES DEBITAR / MODO 1 ACRED
 }
 
 
-function calcularPrecioLinea(precio, cantidad)
-{
+function calcularPrecioLinea(precio, cantidad){
     let totalLinea = precio * cantidad;
     return (totalLinea);
 }
@@ -323,9 +310,8 @@ function calcularPrecioLinea(precio, cantidad)
 //FUNCION PARA MOSTRAR PRODUCTOS
 
 function mostrarProductos() {
-
     html.innerHTML = "";
-    for (producto of productos) { //EN EL FOR VOY AAGREGAANDO UNA TARJETA PRO CADA PRODUCTO
+    for (producto of productos) { //EN EL FOR VOY AGREGAANDO UNA TARJETA Por CADA PRODUCTO
         templateCard.querySelector("h5").textContent = producto.descripcion;
         templateCard.querySelector("p").textContent = `$ ${producto.valor}`;
         templateCard.querySelector("img").setAttribute("src", `imagenes/${producto.imagen}`);
@@ -344,11 +330,6 @@ function mostrarProductos() {
 }
 
 
-
-
-
-// SACO FUNCIONALIDAD DE STOCK MOMENTANEAMENTE
-
 //AGREGAR ITEMS AL CARRITO
 function agregaraCarrito(idProdSeleccionado, descProdSeleccionado, valorProdSeleccionado) {
 
@@ -356,27 +337,23 @@ function agregaraCarrito(idProdSeleccionado, descProdSeleccionado, valorProdSele
     if (carrito.length > 0) //SI EL CARRITO TIENE ALGO , VERIFICO SI EL PRODUCTO QUE LLEGA YA SE ENCUENTRA PARA SUMARLO
     {
             const i = carrito.findIndex(prod => prod.idProducto == idProdSeleccionado); //obtengo el indice del idproducto del objeto carrito
-                  if (i == -1) 
-                  {
-            //SI NO SE ENCUENTRA EN EL CARRITO LO GUARDO
-            const lineacarrito = new Carrito(idProdSeleccionado, descProdSeleccionado, 1, valorProdSeleccionado, valorProdSeleccionado);
-            carrito.push(lineacarrito);//guardo un objeto carrito que contiene la info de la linea
+                  if (i == -1) {
+                             //SI NO SE ENCUENTRA EN EL CARRITO LO GUARDO
+                             const lineacarrito = new Carrito(idProdSeleccionado, descProdSeleccionado, 1, valorProdSeleccionado, valorProdSeleccionado);
+                             carrito.push(lineacarrito);//guardo un objeto carrito que contiene la info de la linea
                   }
-                 else 
-                  {
-                    //SI SE ENCUENTRA EN EL CARRITO SUMO LA CANTIDAD Y EL TOTAL
-                     carrito[i].cantidad += 1;    
-                     carrito[i].total = carrito[i].cantidad * parseFloat(carrito[i].precioLineaCarrito);
+                 else {
+                            //SI SE ENCUENTRA EN EL CARRITO SUMO LA CANTIDAD Y EL TOTAL
+                             carrito[i].cantidad += 1;    
+                             carrito[i].total = carrito[i].cantidad * parseFloat(carrito[i].precioLineaCarrito);
                    }
     }
-    else  //SI EL CARRITO ESTA VACIO LO AGREGO //HAY QUE OPTIMIZAR
-    {
+    else {  //SI EL CARRITO ESTA VACIO LO AGREGO //HAY QUE OPTIMIZAR
         const lineacarrito = new Carrito(idProdSeleccionado, descProdSeleccionado, 1, valorProdSeleccionado, valorProdSeleccionado);
         carrito.push(lineacarrito);//guardo un objeto carrito que contiene la info de la linea  
     }
 
-     if (localStorage.getItem("carrito") === null) 
-     {
+     if (localStorage.getItem("carrito") === null) {
                 localStorage.setItem("carrito", JSON.stringify(carrito));
          }
             else 
@@ -408,7 +385,7 @@ html.addEventListener('click', e => {
         let valorProdSeleccionado = e.target.parentElement.querySelector("p").textContent;
         agregaraCarrito(idProdSeleccionado, descProdSeleccionado, productoEnCarrito.valor);
         mostrarProductos();
-        let contadorCarrito=document.getElementById("contador");
+        let contadorCarrito=document.querySelector("#contador");
         contador+=1;
         contadorCarrito.innerHTML=contador;
         localStorage.setItem("contador", JSON.stringify(contador)); //guardo la cantidad del carrito
@@ -428,10 +405,17 @@ html.addEventListener('click', e => {
 
 
 
+//EVENTO RECARGA DINERO
+    
+const btnRecargar = document.querySelector("#btnRecargar");
+    btnRecargar.addEventListener('click', e => {
+    agregarDineroACuentaUsuario(usuarioLogueado);
+    linKMiSaldo.textContent  = `Saldo Disponible $${usuarioLogueado.cuenta}`;
+})
 
 
 //EVENTO DEL BOTON VER CARRITO
-const vercarrito = document.getElementById("btnVerCarrito");
+const vercarrito = document.querySelector("#btnVerCarrito");
 vercarrito.addEventListener('click', e => {
 verCarrito();
 
@@ -441,23 +425,30 @@ verCarrito();
 
 
 //EVENTO BOTON LOGIN
-const eventoBotonLogin = document.getElementById("btnLogin");
+const eventoBotonLogin = document.querySelector("#btnLogin");
 eventoBotonLogin.addEventListener('click', e => {
 
-    const usuarioDigitado = document.getElementById("txtUser").value;
-    const UsuarioPassword = document.getElementById("txtPass").value;
+    const usuarioDigitado = document.querySelector("#txtUser").value;
+    const UsuarioPassword = document.querySelector("#txtPass").value;
     const valido = validarUsuario(usuarioDigitado, UsuarioPassword);
 
-    if (valido) 
-    { // SI VALIDÓ USUARIO
+    if (valido) { // SI VALIDÓ USUARIO
+                     totSaldoCarrtio.textContent=`Saldo: $${usuarioLogueado.cuenta}`;
                       //COMPORTAMIENTO LINK MICUENTA
                      linKMiCuenta.setAttribute("class", "nav-link active")
                      linKMiCuenta.setAttribute("disabled", "true"); 
                      linKMiCuenta.textContent  = "Mi Cuenta";
+                    //COMPORTAMIENTO LINK RECARGAR
+                     linKRecargar.setAttribute("class", "nav-link active")
+                     linKRecargar.setAttribute("disabled", "true"); 
+                     linKRecargar.textContent  = "Recargar Saldo";
                      //COMPORTAMIENTO LINK SALDO
+                     
                      linKMiSaldo.setAttribute("class", "nav-link active")
                      linKMiSaldo.setAttribute("disabled", "true"); 
                      linKMiSaldo.textContent  = `Saldo Disponible $${usuarioLogueado.cuenta}`;
+                    // const usuarioDigitado = document.getElementById("txtsaldoActual").value;
+                     //txtsaldoActual
                       //COMPORTAMIENTO LINK INGRESAR
                      linkIngresar.setAttribute("disabled", "true");   //SI VALIDO MARCO EL LINK deshabilitado PARA QUE NO SE PUEDA INGRESAR DE NUEVo
                      linkIngresar.textContent = `Bienvenido ${JSON.parse(sessionStorage.getItem("usuario")).nombre}`
@@ -499,7 +490,7 @@ eventoBotonLogin.addEventListener('click', e => {
             linkIngresar.textContent = `Ingresar`;
             linkIngresar.removeAttribute("class", "nav-link disabled");
             linKMiCuenta.removeAttribute("class", "nav-link disabled");
-            console.log(contador);
+          
         })
     }
     else { //SI NO VALIDÓ    
@@ -517,9 +508,9 @@ Swal.fire({
 eventoBotonVaciar.addEventListener('click', e => {
     vaciarCarrito(0);
     html.innerHTML = "";
-    mostrarProductos()
-    localStorage.removeItem("carrito")
-    localStorage.removeItem("contador")
+    mostrarProductos();
+    localStorage.removeItem("carrito");
+    localStorage.removeItem("contador");
     contador=0;
     contadorCarrito.innerHTML=contador;
 })
@@ -528,15 +519,16 @@ eventoBotonVaciar.addEventListener('click', e => {
 //EVENTO BOTON REGISTRARSE
 eventoBotonRegistro.addEventListener('click', e => {
 
-    const nombreUsuario = document.getElementById("txtUser").value;
-    const nombre = document.getElementById("txtNombre").value;
-    const apellido = document.getElementById("txtApellido").value;
+    const nombreUsuario = document.querySelector("#txtUser1").value;
+    const nombre = document.querySelector("#txtNombre").value;
+    const apellido = document.querySelector("#txtApellido").value;
     const id=Math.ceil(Math.random() * 1000).toString();
     const cuenta=0;
-    const email=document.getElementById("txtmail").value;
-    const pass=document.getElementById("txtPass").value;
-    const UsuarioNuevo= new Usuario(nombre,apellido,pass,nombreUsuario,cuenta,email);
+    const email=document.querySelector("#txtmail").value;
+    const pass=document.querySelector("#txtPass1").value;
+    const UsuarioNuevo= new Usuario(id,nombre,apellido,nombreUsuario,pass,cuenta,email);
     agregarUsuario(UsuarioNuevo);
+
 
 })
 
@@ -558,9 +550,9 @@ eventoBotonComprar.addEventListener('click', e => {
 })
 
 
-// EVENTOS PARA SUMAR Y RESTAR EN CARRITO
+// FUNCION PARA EVENTOS DE SUMAR Y RESTAR EN CARRITO
 SumoResto = () => {
-   // console.log(contador)
+ 
     const botonSumar= document.querySelectorAll("#carritoConProducto .btn-info")
     const botonRestar= document.querySelectorAll("#carritoConProducto .btn-danger")
     //RECORRO TODOS LOS BOTONES BTNSUMAR
@@ -578,7 +570,7 @@ SumoResto = () => {
     
     
     
-    //RECORRO TODOS LOS BOTONES RESTAR
+    //RECORRO TODOS LOS BOTONES RESTar
     botonRestar.forEach(btn => {
             btn.addEventListener('click',()=> {
              //   console.log(contador)
@@ -597,11 +589,9 @@ SumoResto = () => {
 
 
 
-
     function actualizarlocalStorageCarrito(){ //SETEO EL LOCAL STORAGE EN CADA MOVIMIENTO DEL CARRITO
-       
         localStorage.setItem("contador", JSON.stringify(contador)); //guardo la cantidad del carrito
-        localStorage.setItem("carrito", JSON.stringify(carrito)); //guardo la cantidad del carrito
+        localStorage.setItem("carrito", JSON.stringify(carrito)); //guardo la linea carrito
     }
 
 
@@ -610,10 +600,9 @@ SumoResto = () => {
 //VER CARRITO
 function verCarrito() {
      
-    document.getElementById("carritoConProducto").innerHTML = "";
+    document.querySelector("#carritoConProducto").innerHTML = "";
     for (elementoCarrito of carrito) 
     {
-
         templateCARRITO.querySelectorAll("td")[0].textContent = elementoCarrito.descProducto;
         templateCARRITO.querySelectorAll("td")[1].textContent = elementoCarrito.cantidad;
         templateCARRITO.querySelector("span").textContent = elementoCarrito.total;
@@ -622,21 +611,29 @@ function verCarrito() {
         const clone = templateCARRITO.cloneNode(true);
         fragment.appendChild(clone);
     }
-        document.getElementById("carritoConProducto").appendChild(fragment)
-        lineaMontoTotal.textContent=textContent=`Total Compra: $${montoCompra()}`;
+        document.querySelector("#carritoConProducto").appendChild(fragment)
+        lineaMontoTotal.textContent=textContent=`Total Compra: $${montoCompra()} `;
+      
         SumoResto () ; //funcion de los botones de sumar y restar
-
+       
+      
 }
 
 
-                                        //////////////INICIO////////////////////////
+                                       
 
-mostrarProductos();
+async function inicioProductos()
+{
+    await cargarProductos();
+    mostrarProductos();
+
+}
+                                      
+inicioProductos();//ARRANCO PROGRAMA
 sessionStorage.removeItem("usuario"); //AL INICIAR PROGRAMA BORRO EL SESSIONSTORAGE PARA SEGURIDAD QUE HAYA QUEDADO DUPLICADO
-
-
 carrito= JSON.parse(localStorage.getItem("carrito")) || [] ;//CARGO EL CARRITO, SI HAY ALGO.
 contador=JSON.parse(localStorage.getItem("contador"))|| 0; //CARGO EL CONTADOR CARRTIO, SI HAY ALGO.
-
-let contadorCarrito=document.getElementById("contador");
+let contadorCarrito=document.querySelector("#contador");
 contadorCarrito.innerHTML=contador;
+
+
