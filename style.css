@@ -1,11 +1,11 @@
 body {
-    background-color: #472a2a;  
+    background-color: #ac9d9d;  
 }
 
 h1 {
     width: 100%;
     text-align: center;
-    color:rgb(255, 255, 255);
+    color:rgb(134, 111, 111);
     font-size: 4vw;
     margin: 15px
 }
@@ -22,18 +22,112 @@ section {
 }
 
 .menuItem{
-    color: rgb(185, 10, 118) !important;
+    color: rgb(92, 46, 74) !important;
     padding: 20px !important;
-    font-size: 25px;
-    font-style: oblique;
+    font-size: 20px;
+    /*font-style: */
 }
+
 
 div.product-card {
     width: 30%;
     height: 20vh;
     margin: 2%;
-
     text-align: center;
+    background-color: rgb(114, 82, 53);
+}
 
-    background-color: rgb(193, 101, 14);
+
+
+* {box-sizing: border-box}
+
+/* Add padding to containers */
+.container {
+  padding: 16px;
+}
+
+/* Full-width input fields */
+input[type=text], input[type=password] {
+  width: 100%;
+  padding: 15px;
+  margin: 5px 0 22px 0;
+  display: inline-block;
+  border: none;
+  background: #f1f1f1;
+}
+
+input[type=text]:focus, input[type=password]:focus {
+  background-color: rgb(207, 110, 110);
+  outline: none;
+}
+
+
+hr {
+  border: 1px solid #f1f1f1;
+  margin-bottom: 25px;
+}
+
+/* Set a style for the submit/register button */
+
+.registerbtn {
+  background-color: #04AA6D;
+  color: white;
+  padding: 16px 20px;
+  margin: 8px 0;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  opacity: 0.9;
+}
+
+a {
+  color: dodgerblue;
+}
+
+
+.signin {
+  background-color: #f1f1f1;
+  text-align: center;
+}
+
+#logueoLabel
+{
+  color: rgb(26, 23, 24) !important;
+  padding: 20px !important;
+  font-size: 30px;
+ 
+  
+}
+#navbarSupportedContent
+{
+  padding: 5px !important;
+  color: #04AA6D !important;
+  margin: 5px !important;
+  width: 50% !important;
+}
+
+#LinkCerrar
+{
+  color: rgb(26, 23, 24) !important;
+  padding: 20px !important;
+  font-size: 18px;
+  align-content: center;
+   
+}
+
+input:invalid{
+    border:1px dashed rgb(43, 39, 39);
+}
+
+input:valid{
+    border:1px solid black;
+}
+
+.form-control
+{
+  background-color: #dae0dd !important; 
+  height: 50px ;
+  margin: 5px !important;
+  width: 100% !important;
+
 }
