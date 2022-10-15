@@ -1,4 +1,4 @@
-//CONSTANTES Y VARIABLES
+//CONSTANTES Y VARIABLESconst
 const usuarios = [];
 const facturas = [];
 const productos = [];
@@ -6,31 +6,38 @@ let carrito = [];
 let producto;
 let pass;
 let contador=0;
+
 let usuarioLogueado;
+const urlJsonProductos="./productos.json";
+const urlJsonUsuarioPrueba="./usuariosPrueba.json";
+
+
 
 ///ELEMENTOS EN HTML////////
 const linKMiSaldo = document.querySelector("#LinkMiSaldo");
-const eventoBotonRegistro = document.querySelector("#btnRegistro");
+const eventoFormRegistro = document.querySelector("#formRegister");
 const html = document.querySelector("#Productos")
 const templateCard = document.querySelector("#templateCard").content;
 const fragment = document.createDocumentFragment();
-const templateCARRITO = document.querySelector("#templatelistaCarrito").content; //aca es donde va la data
+const templateCARRITO = document.querySelector("#templatelistaCarrito").content; 
 const eventoBotonComprar = document.querySelector("#btnComprar");
 const cerrarSesion = document.querySelector("#divCerrarSesion");
 const botonCerrarSesion = document.createElement("a");
 const linkRegistrarse = document.querySelector("#LinkRegistro");
 const linkIngresar = document.querySelector("#Linkingresar");
-const linKMiCuenta = document.querySelector("#LinkMiCuenta");
 const linKRecargar = document.querySelector("#LinkRecargar");
 const eventoBotonCerrarSesion = document.querySelector("#LinkCerrar");
 const eventoBotonVaciar = document.querySelector("#btnBorrar");
 const lineaMontoTotal=document.querySelector("#totCompra");
 const totSaldoCarrtio=document.querySelector("#totSaldo");
-const urlJsonProductos="./productos.json";
+const loginForm=document.querySelector("#loginForm");
+const btnCloseLogin=document.querySelector("#btnCloseLogin");
+const btnCloseCuenta=document.querySelector("#btnCloseCuenta");
+const btnClose=document.querySelector("#btnClose");
 
 
 
-// CONSTRUCTOR FACTURA
+
 class Factura {
     constructor(idUsuario, nroFactura, fecha, total, items) {
         this.idUsuario = idUsuario;
@@ -43,7 +50,6 @@ class Factura {
 
 
 
-// CONSTRUCTOR USUARIO
 class Usuario {
     constructor(id, nombre, apellido, nombreUsuario, pass, cuenta, email) {
         this.id = id;
@@ -56,15 +62,21 @@ class Usuario {
     }
 }
 
-//para borrar, SI BIEN SE Puede AGREGAR USUARIOS , SE HARCODEA PARA TRABAJAR MAS RAPIDO
-const usuario1 = new Usuario(1, "Diego", "Tocchetto", "dtoccho", "131313", 100000, "diego.tocchetto@gmail.com");
-const usuario2 = new Usuario(2, "Profesor Coder", "js", "profe", "111111", 5000, "profesor@gmail.com");
-usuarios.push(usuario1);
-usuarios.push(usuario2);
 
 
+async function cargarUsuarioDePrueba() { //USUARIOS HARCODEADOS
+    await fetch(urlJsonUsuarioPrueba)
+   .then((resp)=>resp.json())
+   .then((data)=>{
+       data.forEach((usuario)=>
+       {
 
-// CONSTRUCTOR PRODUCTO
+       usuario = new Usuario(usuario.id,usuario.nombre,usuario.apellido,usuario.nombreUsuario,usuario.pass,usuario.cuenta,usuario.email);
+       usuarios.push(usuario); 
+       })
+   })
+   }
+
 class Producto {
     constructor(id, descripcion, valor, cantidad, imagen) {
         this.id = id;
@@ -76,12 +88,12 @@ class Producto {
 }
 
 
-
 async function cargarProductos() { //CARGO LOS PRODUCTOS DESDE EL JSON Y LOS METO EN EL ARRAY
  await fetch(urlJsonProductos)
 .then((resp)=>resp.json())
 .then((data)=>{
-    data.forEach((producto)=>{
+    data.forEach((producto)=>
+    {
     producto = new Producto(producto.id,producto.descripcion,producto.valor,producto.cantidad,producto.imagen);
     productos.push(producto); 
     })
@@ -102,7 +114,6 @@ class Carrito {
 
 
 //FUNCIONES UTILES
-
 function fechaActual() {
     let date = new Date();
     const formatDate = (date) => {
@@ -132,37 +143,27 @@ function validarUsuario(nombreUsuario, password) {
 
 //AGREGA AL USUARIO 
 function agregarUsuario(usuarioNuevo) {
-    console.log("LLEGA");
-    console.log(usuarioNuevo.email);
     const existeUsuarioMail = usuarios.find(usuario => usuario.email === usuarioNuevo.email);
     const existeUsuarioNombreUsuario = usuarios.find(usuario => usuario.nombreUsuario === usuarioNuevo.nombreUsuario);
-
     if (!existeUsuarioMail && !existeUsuarioNombreUsuario) {
         usuarios.push(usuarioNuevo);
-     // ALERT
+        btnClose.click();
         Swal.fire(
-            (`Hola ${usuarioNuevo.nombre} ${usuarioNuevo.apellido}, te has registrado correctamente`),
-            '',
-            'Vamos...seguí comprando'
+            (`Hola ${usuarioNuevo.nombre} ${usuarioNuevo.apellido}, te has registrado correctamente`),'empezá a comprar','success'
           )
+          return true;
     }
 
 
     
-    //SI EXISTE EL USUARIO VERIFICO QUE NO TENGAN  LL NOMBREUSUARIO O EL CORREO
+    //SI EXISTE EL USUARIO VERIFICO QUE NO HAMA MISMO NOMBREUSUARIO O MISMO CORREO
     if (existeUsuarioMail) {
-        Swal.fire({
-            icon: 'error',
-            title: "YA EXISTE UN USUARIO CON ESE CORREO ELECTRÓNICO",
-
-          })
-    
+        Swal.fire({ icon: 'error',title: "YA EXISTE UN USUARIO CON ESE CORREO ELECTRÓNICO",})
+        return false;
     }
     if (existeUsuarioNombreUsuario) {
-         Swal.fire({
-            icon: 'error',
-            title: "YA EXISTE UN USUARIO CON ESE NOMBRE DE USUARIO",
-          })
+         Swal.fire({icon: 'error',title: "YA EXISTE UN USUARIO CON ESE NOMBRE DE USUARIO",})
+        return false;
     }
 
 }
@@ -172,29 +173,24 @@ function agregarUsuario(usuarioNuevo) {
 function vaciarCarrito(accion) {
     const tamanioCarrtitoOriginal = carrito.length;
     for (let i = carrito.length; i > 0; i--) { 
-
         const lineacarrito = new Carrito(carrito[i - 1].idProducto, carrito[i - 1].descripcion, carrito[i - 1].cantidad, carrito[i - 1].precioLineaCarrito);
         carrito.pop(); //  //borro de abajo para arriba
-        let contadorCarrito=document.querySelector("#contador");
-        contador=0;
-        contadorCarrito.innerHTML=contador;
+        let contadorCarrito=document.querySelector("#contador"); 
+        contadorCarrito.innerHTML=0;
+        localStorage.removeItem("carrito");
+        localStorage.removeItem("contador");
         document.querySelector("#btnCerrar").click();
     }
 
     
     if (tamanioCarrtitoOriginal === 0 && accion === 0) {
-        Swal.fire({
-            icon: 'error',
-            title: "No hay items en su carrito",
-
-
-          })
+        Swal.fire({icon: 'error',title: "No hay items en su carrito",})
     }
+
 
     if (accion === 0 && tamanioCarrtitoOriginal > 0) //0 sE INVOCA DESDE VACIAR CARRITO / 1 - SE INVOCA DESDE EL PAGAR 
     {
-         Swal.fire('Los items del carrito se quitaron correctamente','vamos, busca el producto que te gusta y agregalo'
-          )
+         Swal.fire('Los items del carrito se quitaron correctamente','vamos, buscá el producto que te gusta y agregálo','success')
     }
 }
 
@@ -202,16 +198,25 @@ function vaciarCarrito(accion) {
 //AGREGAR DINERO A LA CUENTA DEL USUARIO // NO FUNCIONAL AUN CON DOM
 function agregarDineroACuentaUsuario(usuarioLogueado) {
 
-    for(ElementoUsuario of usuarios)
+    for(elementoUsuario of usuarios)
     {
-        if (ElementoUsuario.nombreUsuario === usuarioLogueado.nombreUsuario)
+        if (elementoUsuario.nombreUsuario === usuarioLogueado.nombreUsuario)
          {
-            let deposito = parseFloat(document.querySelector("#xtSaldo").value);
-            let saldo = ElementoUsuario.cuenta;
-            ElementoUsuario.cuenta = saldo + deposito;
-            usuarioLogueado = ElementoUsuario;
-            Swal.fire('Se ha acreditado correctamente','vamos , busca el producto que te gusta y comprálo')
-            break;
+            let deposito = parseFloat(document.querySelector("#txtSaldo").value);
+            if(deposito>0)
+            {
+                let saldo = elementoUsuario.cuenta;
+                elementoUsuario.cuenta = saldo + deposito;
+                usuarioLogueado = elementoUsuario;
+                Swal.fire('Se ha acreditado correctamente el dinero en su cuenta','vamos , busca el producto que te gusta y comprálo','success')
+                btnCloseCuenta.click();
+                document.querySelector("#txtSaldo").value="";
+                break;
+           }
+           else{
+            Swal.fire({icon: 'error',title: "Ingrese un importe válido",})
+           }
+           
           }
     }
 
@@ -221,38 +226,18 @@ function agregarDineroACuentaUsuario(usuarioLogueado) {
 
 
 //GENERAR FACTURA 
-function generarFactura(total, carrito) 
-{
-    let nroFactura = Math.ceil(Math.random() * 1000000).toString();
+function generarFactura(total, carrito) {
+
+    let nroFactura = "A - "+Math.ceil(Math.random() * 1000000).toString();
     const factura = new Factura(usuarioLogueado.id, nroFactura, fechaActual(), total, carrito);
     facturas.push(factura);
-}
-
-
-
-//VER FACTURAS // NO FUNCIONAL AUN CON DOM
-function verFactura(idusuario) {
-
-    let misfacturas = "";
-    if (facturas.length > 0) 
-    {
-        for(elementoFactura of facturas)
-        {
-            if (elementoFactura.idUsuario === usuarioLogueado.id) {
-                        misfacturas += "Nro. Factura: " + facturas[i].nroFactura + " - " + "Fecha: " + facturas[i].fecha + " - " + "Total $: " + facturas[i].total + "\n";
-                    } }
-    }
-    else 
-    {
-        misfacturas = "Usted no ha hecho ninguna compra";
-    }
-    return misfacturas
+    return factura;
 }
 
 
 
 
-//SUMA TODOS LOS TOTALES DE CADA LINEA DEL CARRITO Y DEVUELVE EL TOTAL A PAGAR
+//SUMA LOS TOTALES DE CADA LINEA DEL CARRITO Y DEVUELVE EL TOTAL A PAGAR
 function montoCompra() {
     let montoTotal = 0;
     for(elementoCarrito of carrito){
@@ -270,11 +255,11 @@ function comprar() {
 
         let i = usuarios.findIndex(usuario => usuario.nombreUsuario === JSON.parse(sessionStorage.getItem("usuario")).nombreUsuario);
         if (parseFloat(usuarios[i].cuenta) >= parseFloat(total)) {
-            usuarios[i].cuenta -= total;   //  actualizo el saldo en el array de usuariosd
-            generarFactura(total, carrito);//GENERO LA FACTURA
+            usuarios[i].cuenta -= total;   //  actualizo el saldo en el array 
+            const factura= generarFactura(total, carrito);//GENERO LA FACTURA
             vaciarCarrito(1); // VACIO CARRITO 
             const compraOk=`Gracias ${usuarios[i].nombre} ${usuarios[i].apellido}, tu Compra se ha realizado con éxito, recibirás un correo a ${usuarios[i].email} con los detalles`
-            Swal.fire(compraOk,'Tus pedidos ya se están preparando',)
+            Swal.fire(compraOk,`Tu número de factura es ${factura.nroFactura}`,'success')
         }
         else {
             const compraError  =`Saldo Insuficiente, su saldo es de $ ${parseFloat(usuarios[i].cuenta)} , recargue dinero para continuar con la compra`;
@@ -288,17 +273,6 @@ function comprar() {
 
 
 
-
-
-
-// FUNCION MOMENTANEAMENTE NO LLAMADA
-function moverStock(modo, lineacarrito) //    //MODO 0 ES DEBITAR / MODO 1 ACREDITAR Y VIENE UN OBJETO CARRITO QUE ES LA LINEA
-{
-    let i = productos.findIndex(prod => prod.id == lineacarrito.idProducto); //obtengo el indice del idproducto del objeto carrito
-    modo === 1 ? productos[i].cantidad+= lineacarrito.cantidad : productos[i].cantidad-= lineacarrito.cantidad;
-}
-
-
 function calcularPrecioLinea(precio, cantidad){
     let totalLinea = precio * cantidad;
     return (totalLinea);
@@ -308,7 +282,6 @@ function calcularPrecioLinea(precio, cantidad){
 
 
 //FUNCION PARA MOSTRAR PRODUCTOS
-
 function mostrarProductos() {
     html.innerHTML = "";
     for (producto of productos) { //EN EL FOR VOY AGREGAANDO UNA TARJETA Por CADA PRODUCTO
@@ -330,6 +303,8 @@ function mostrarProductos() {
 }
 
 
+
+
 //AGREGAR ITEMS AL CARRITO
 function agregaraCarrito(idProdSeleccionado, descProdSeleccionado, valorProdSeleccionado) {
 
@@ -337,22 +312,22 @@ function agregaraCarrito(idProdSeleccionado, descProdSeleccionado, valorProdSele
     if (carrito.length > 0) //SI EL CARRITO TIENE ALGO , VERIFICO SI EL PRODUCTO QUE LLEGA YA SE ENCUENTRA PARA SUMARLO
     {
             const i = carrito.findIndex(prod => prod.idProducto == idProdSeleccionado); //obtengo el indice del idproducto del objeto carrito
-                  if (i == -1) {
-                             //SI NO SE ENCUENTRA EN EL CARRITO LO GUARDO
-                             const lineacarrito = new Carrito(idProdSeleccionado, descProdSeleccionado, 1, valorProdSeleccionado, valorProdSeleccionado);
-                             carrito.push(lineacarrito);//guardo un objeto carrito que contiene la info de la linea
+                  if (i == -1) {//SI NO SE ENCUENTRA EN EL CARRITO LO GUARDO
+                       const lineacarrito = new Carrito(idProdSeleccionado, descProdSeleccionado, 1, valorProdSeleccionado, valorProdSeleccionado);
+                      carrito.push(lineacarrito);
                   }
                  else {
-                            //SI SE ENCUENTRA EN EL CARRITO SUMO LA CANTIDAD Y EL TOTAL
-                             carrito[i].cantidad += 1;    
-                             carrito[i].total = carrito[i].cantidad * parseFloat(carrito[i].precioLineaCarrito);
+                 //SI SE ENCUENTRA EN EL CARRITO SUMO LA CANTIDAD Y EL TOTAL
+                  carrito[i].cantidad += 1;    
+                 carrito[i].total = carrito[i].cantidad * parseFloat(carrito[i].precioLineaCarrito);
                    }
     }
-    else {  //SI EL CARRITO ESTA VACIO LO AGREGO //HAY QUE OPTIMIZAR
+    else {  //SI EL CARRITO ESTA VACIO LO AGREGO
         const lineacarrito = new Carrito(idProdSeleccionado, descProdSeleccionado, 1, valorProdSeleccionado, valorProdSeleccionado);
         carrito.push(lineacarrito);//guardo un objeto carrito que contiene la info de la linea  
     }
 
+    //ACTUALIZO LOCALSTORAGE
      if (localStorage.getItem("carrito") === null) {
                 localStorage.setItem("carrito", JSON.stringify(carrito));
          }
@@ -382,7 +357,6 @@ html.addEventListener('click', e => {
         let i = productos.findIndex(prod => prod.id == idProdSeleccionado); //Busco en productos el objeto
         productoEnCarrito = productos[i];
         let descProdSeleccionado = e.target.parentElement.querySelector("h5").textContent;
-        let valorProdSeleccionado = e.target.parentElement.querySelector("p").textContent;
         agregaraCarrito(idProdSeleccionado, descProdSeleccionado, productoEnCarrito.valor);
         mostrarProductos();
         let contadorCarrito=document.querySelector("#contador");
@@ -393,7 +367,7 @@ html.addEventListener('click', e => {
         totalCarrito.content=`MONTO TOTAL  $ ${montoCompra()}`;
         Toastify({
             text: "Producto agregado al carrito!",
-            duration: 3000,
+            duration: 2000,
             gravity: 'bottom',
             position: 'center',
             style: {
@@ -406,11 +380,11 @@ html.addEventListener('click', e => {
 
 
 //EVENTO RECARGA DINERO
-    
 const btnRecargar = document.querySelector("#btnRecargar");
     btnRecargar.addEventListener('click', e => {
-    agregarDineroACuentaUsuario(usuarioLogueado);
+    agregarDineroACuentaUsuario(usuarioLogueado); //aca
     linKMiSaldo.textContent  = `Saldo Disponible $${usuarioLogueado.cuenta}`;
+    totSaldoCarrtio.textContent=`Saldo: $${usuarioLogueado.cuenta}`;
 })
 
 
@@ -423,32 +397,22 @@ verCarrito();
 
 
 
-
 //EVENTO BOTON LOGIN
 const eventoBotonLogin = document.querySelector("#btnLogin");
-eventoBotonLogin.addEventListener('click', e => {
-
+loginForm.addEventListener('submit', e => {
     const usuarioDigitado = document.querySelector("#txtUser").value;
     const UsuarioPassword = document.querySelector("#txtPass").value;
     const valido = validarUsuario(usuarioDigitado, UsuarioPassword);
-
     if (valido) { // SI VALIDÓ USUARIO
                      totSaldoCarrtio.textContent=`Saldo: $${usuarioLogueado.cuenta}`;
-                      //COMPORTAMIENTO LINK MICUENTA
-                     linKMiCuenta.setAttribute("class", "nav-link active")
-                     linKMiCuenta.setAttribute("disabled", "true"); 
-                     linKMiCuenta.textContent  = "Mi Cuenta";
                     //COMPORTAMIENTO LINK RECARGAR
                      linKRecargar.setAttribute("class", "nav-link active")
                      linKRecargar.setAttribute("disabled", "true"); 
                      linKRecargar.textContent  = "Recargar Saldo";
                      //COMPORTAMIENTO LINK SALDO
-                     
                      linKMiSaldo.setAttribute("class", "nav-link active")
                      linKMiSaldo.setAttribute("disabled", "true"); 
                      linKMiSaldo.textContent  = `Saldo Disponible $${usuarioLogueado.cuenta}`;
-                    // const usuarioDigitado = document.getElementById("txtsaldoActual").value;
-                     //txtsaldoActual
                       //COMPORTAMIENTO LINK INGRESAR
                      linkIngresar.setAttribute("disabled", "true");   //SI VALIDO MARCO EL LINK deshabilitado PARA QUE NO SE PUEDA INGRESAR DE NUEVo
                      linkIngresar.textContent = `Bienvenido ${JSON.parse(sessionStorage.getItem("usuario")).nombre}`
@@ -459,21 +423,18 @@ eventoBotonLogin.addEventListener('click', e => {
                     linkRegistrarse.textContent  = "";
                      //COMPORTAMIENTO BOTON CERRAR SESION
                      botonCerrarSesion.id = "LinkCerrar";
-                     botonCerrarSesion.className = "nav-link active";
                      botonCerrarSesion.setAttribute("data-bs-target", "#staticBackdrop");
                      botonCerrarSesion.setAttribute("href", "");
                      botonCerrarSesion.setAttribute("aria-current", "page");
-                     botonCerrarSesion.setAttribute("class", "btn-Cerrar'");
+                     botonCerrarSesion.setAttribute("class", "btn-Cerrar");
                      botonCerrarSesion.setAttribute("class", "nav-link active")
                      botonCerrarSesion.textContent = "Cerrar Sesion";
-                    //COMPORTAMIENTO LINK MI CUENTA
-                    linKMiCuenta.setAttribute("class", "nav-link active")
-                    linKMiCuenta.textContent = "Mi cuenta";
-        
+         
                    cerrarSesion.appendChild(botonCerrarSesion);
+                   btnCloseLogin.click();
                    Toastify({
                     text: "Has iniciado sesion correctamente!",
-                    duration: 2000,
+                    duration: 1200,
                     gravity: 'bottom',
                     position: 'center',
                     style: {
@@ -482,22 +443,23 @@ eventoBotonLogin.addEventListener('click', e => {
                 }).showToast();
 
 
+
+
+
             //EVENTO BOTÓN CERRAR SESION
              botonCerrarSesion.addEventListener('click', e => {
-            //ELIMINO EL SESSION STORAGE y quito el boton cerrar session Y CAMBIO EL ESTADO DEL BOTON INGRESAR
-            sessionStorage.removeItem("usuario");// QUITO AL USUARIO DEL STORAGE
-            cerrarSesion.removeChild(botonCerrarSesion); //QUITO EL BOTON CERRAR SESION
+            sessionStorage.removeItem("usuario");
+            cerrarSesion.removeChild(botonCerrarSesion); 
             linkIngresar.textContent = `Ingresar`;
             linkIngresar.removeAttribute("class", "nav-link disabled");
-            linKMiCuenta.removeAttribute("class", "nav-link disabled");
           
-        })
-    }
+             })
+           }
     else { //SI NO VALIDÓ    
-Swal.fire({
-    icon: 'error',
-    title: 'Usuario o Contraseña incorrectos, vuelve a intentarlo',
-  })
+            Swal.fire({
+            icon: 'error',
+            title: 'Usuario o Contraseña incorrectos, vuelve a intentarlo',
+            })
     }
 })
 
@@ -516,20 +478,23 @@ eventoBotonVaciar.addEventListener('click', e => {
 })
 
 
-//EVENTO BOTON REGISTRARSE
-eventoBotonRegistro.addEventListener('click', e => {
 
-    const nombreUsuario = document.querySelector("#txtUser1").value;
+
+//EVENTO BOTON REGISTRARSE
+    eventoFormRegistro.addEventListener('submit', e => {
     const nombre = document.querySelector("#txtNombre").value;
+    const nombreUsuario = document.querySelector("#txtUser1").value;
     const apellido = document.querySelector("#txtApellido").value;
     const id=Math.ceil(Math.random() * 1000).toString();
     const cuenta=0;
     const email=document.querySelector("#txtmail").value;
     const pass=document.querySelector("#txtPass1").value;
+    const pass2=document.querySelector("#txtPass2").value;
     const UsuarioNuevo= new Usuario(id,nombre,apellido,nombreUsuario,pass,cuenta,email);
-    agregarUsuario(UsuarioNuevo);
-
-
+    let deposito = parseFloat(document.querySelector("#txtSaldo").value);
+    pass===pass2 ? agregarUsuario(UsuarioNuevo): Swal.fire({icon: 'error', title: "Sus contraseñas no coinciden",})
+ 
+   
 })
 
 
@@ -550,6 +515,8 @@ eventoBotonComprar.addEventListener('click', e => {
 })
 
 
+
+
 // FUNCION PARA EVENTOS DE SUMAR Y RESTAR EN CARRITO
 SumoResto = () => {
  
@@ -564,6 +531,7 @@ SumoResto = () => {
      contador++;
      verCarrito() ;
      contadorCarrito.innerHTML=contador;
+     totSaldoCarrtio.textContent=`Saldo: $ ${usuarioLogueado.cuenta}`;
      actualizarlocalStorageCarrito();
     })
     })
@@ -573,7 +541,6 @@ SumoResto = () => {
     //RECORRO TODOS LOS BOTONES RESTar
     botonRestar.forEach(btn => {
             btn.addEventListener('click',()=> {
-             //   console.log(contador)
             const i = carrito.findIndex(prod => prod.idProducto == btn.dataset.id); //obtengo el indice del idproducto del objeto carrito
             carrito[i].cantidad-=1;
             contador--;
@@ -588,11 +555,11 @@ SumoResto = () => {
     }
 
 
-
-    function actualizarlocalStorageCarrito(){ //SETEO EL LOCAL STORAGE EN CADA MOVIMIENTO DEL CARRITO
-        localStorage.setItem("contador", JSON.stringify(contador)); //guardo la cantidad del carrito
-        localStorage.setItem("carrito", JSON.stringify(carrito)); //guardo la linea carrito
-    }
+            //SETEO EL LOCAL STORAGE EN CADA MOVIMIENTO DEL CARRITO
+        function actualizarlocalStorageCarrito(){ 
+        localStorage.setItem("contador", JSON.stringify(contador));
+        localStorage.setItem("carrito", JSON.stringify(carrito)); 
+         }
 
 
 
@@ -614,7 +581,7 @@ function verCarrito() {
         document.querySelector("#carritoConProducto").appendChild(fragment)
         lineaMontoTotal.textContent=textContent=`Total Compra: $${montoCompra()} `;
       
-        SumoResto () ; //funcion de los botones de sumar y restar
+        SumoResto () ; //funcion de los botones de sumar y restar del carrito
        
       
 }
@@ -622,18 +589,22 @@ function verCarrito() {
 
                                        
 
-async function inicioProductos()
+async function inicioPrograma()
 {
+    
     await cargarProductos();
+    await cargarUsuarioDePrueba();
     mostrarProductos();
 
 }
-                                      
-inicioProductos();//ARRANCO PROGRAMA
+                        
+
+
+inicioPrograma();//ARRANCO PROGRAMA 
 sessionStorage.removeItem("usuario"); //AL INICIAR PROGRAMA BORRO EL SESSIONSTORAGE PARA SEGURIDAD QUE HAYA QUEDADO DUPLICADO
 carrito= JSON.parse(localStorage.getItem("carrito")) || [] ;//CARGO EL CARRITO, SI HAY ALGO.
 contador=JSON.parse(localStorage.getItem("contador"))|| 0; //CARGO EL CONTADOR CARRTIO, SI HAY ALGO.
-let contadorCarrito=document.querySelector("#contador");
+contadorCarrito=document.querySelector("#contador");
 contadorCarrito.innerHTML=contador;
 
 
